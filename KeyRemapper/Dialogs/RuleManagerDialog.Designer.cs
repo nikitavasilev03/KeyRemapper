@@ -1,5 +1,5 @@
 ﻿
-namespace KeyRemapper
+namespace KeyRemapper.Dialogs
 {
     partial class RuleManagerDialog
     {
@@ -30,25 +30,25 @@ namespace KeyRemapper
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RuleManagerDialog));
-            this.cbCurrentKey = new System.Windows.Forms.ComboBox();
+            this.cbSendKey = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gbChange = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.cbChangeKey = new System.Windows.Forms.ComboBox();
+            this.cbPressKey = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.gbChange.SuspendLayout();
             this.SuspendLayout();
             // 
-            // cbCurrentKey
+            // cbSendKey
             // 
-            this.cbCurrentKey.FormattingEnabled = true;
-            this.cbCurrentKey.Location = new System.Drawing.Point(12, 36);
-            this.cbCurrentKey.Name = "cbCurrentKey";
-            this.cbCurrentKey.Size = new System.Drawing.Size(240, 21);
-            this.cbCurrentKey.TabIndex = 0;
-            this.cbCurrentKey.SelectedIndexChanged += new System.EventHandler(this.cbCurrentKey_SelectedIndexChanged);
-            this.cbCurrentKey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbCurrentKey_KeyDown);
-            this.cbCurrentKey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.cbCurrentKey_KeyUp);
+            this.cbSendKey.FormattingEnabled = true;
+            this.cbSendKey.Location = new System.Drawing.Point(12, 36);
+            this.cbSendKey.Name = "cbSendKey";
+            this.cbSendKey.Size = new System.Drawing.Size(240, 21);
+            this.cbSendKey.TabIndex = 0;
+            this.cbSendKey.SelectedIndexChanged += new System.EventHandler(this.cbCurrentKey_SelectedIndexChanged);
+            this.cbSendKey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbCurrentKey_KeyDown);
+            this.cbSendKey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.cbCurrentKey_KeyUp);
             // 
             // label1
             // 
@@ -62,7 +62,7 @@ namespace KeyRemapper
             // gbChange
             // 
             this.gbChange.Controls.Add(this.label2);
-            this.gbChange.Controls.Add(this.cbChangeKey);
+            this.gbChange.Controls.Add(this.cbPressKey);
             this.gbChange.Location = new System.Drawing.Point(15, 63);
             this.gbChange.Name = "gbChange";
             this.gbChange.Size = new System.Drawing.Size(237, 72);
@@ -79,14 +79,14 @@ namespace KeyRemapper
             this.label2.TabIndex = 6;
             this.label2.Text = "Клавиша";
             // 
-            // cbChangeKey
+            // cbPressKey
             // 
-            this.cbChangeKey.FormattingEnabled = true;
-            this.cbChangeKey.Location = new System.Drawing.Point(9, 41);
-            this.cbChangeKey.Name = "cbChangeKey";
-            this.cbChangeKey.Size = new System.Drawing.Size(222, 21);
-            this.cbChangeKey.TabIndex = 5;
-            this.cbChangeKey.SelectedIndexChanged += new System.EventHandler(this.cbChangeKey_SelectedIndexChanged);
+            this.cbPressKey.FormattingEnabled = true;
+            this.cbPressKey.Location = new System.Drawing.Point(9, 41);
+            this.cbPressKey.Name = "cbPressKey";
+            this.cbPressKey.Size = new System.Drawing.Size(222, 21);
+            this.cbPressKey.TabIndex = 5;
+            this.cbPressKey.SelectedIndexChanged += new System.EventHandler(this.cbChangeKey_SelectedIndexChanged);
             // 
             // button1
             // 
@@ -106,7 +106,7 @@ namespace KeyRemapper
             this.Controls.Add(this.button1);
             this.Controls.Add(this.gbChange);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.cbCurrentKey);
+            this.Controls.Add(this.cbSendKey);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(288, 242);
             this.MinimumSize = new System.Drawing.Size(288, 242);
@@ -122,11 +122,11 @@ namespace KeyRemapper
 
         #endregion
 
-        private System.Windows.Forms.ComboBox cbCurrentKey;
+        private System.Windows.Forms.ComboBox cbSendKey;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox gbChange;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cbChangeKey;
+        private System.Windows.Forms.ComboBox cbPressKey;
         private System.Windows.Forms.Button button1;
     }
 }

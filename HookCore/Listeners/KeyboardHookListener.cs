@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using HookCore.Models;
+using KeyHookCore;
+using KeyHookCore.Interfaces;
 
-namespace KeyHookCore
+namespace HookCore.Listeners
 {
-    public enum HookResult
-    {
-        Release,
-        NoRelease
-    }
-
     public delegate int KeyboardHookProc(int code, int wParam, ref KeyboardHookData lParam);
     public delegate void KeyboardHookEvent(int wParam, KeyboardHookData lParam);
 
-    public class KeyboardHook
+    public class KeyboardHookListener : IListenerHook
     {
         //#############################################################       
         #region [# Win32 Constants #]
@@ -50,6 +46,7 @@ namespace KeyHookCore
         public bool CtrlHeld => bCtrlHeld;
         private volatile bool bCtrlHeld = false;
 
+        public Func<Hook, HookResult> HandleHook { get; set; }
         #endregion
         //#############################################################
         #region [# Events #]
@@ -62,15 +59,18 @@ namespace KeyHookCore
         //#############################################################
         #region [# Construction / Destruction #]
 
-        public KeyboardHook() {}
+        public KeyboardHookListener()
+        {
+            HandleHook = HookProc;
+        }
 
-        ~KeyboardHook() { Unhook(); }
+        ~KeyboardHookListener() { Unhook(); }
 
         #endregion   
         //#############################################################
         #region [# Hooks #]
 
-        public virtual void Hook()
+        public void Hook()
         {
             hookDelegate = _hookProc;
             //Get library instance
@@ -81,18 +81,19 @@ namespace KeyHookCore
             bHooked = (hhook != null);
         }
 
-        public virtual void Unhook()
+        public void Unhook()
         {
             //Call library unhook function
-            UnhookWindowsHookEx(hhook);
+            if (bHooked)
+                UnhookWindowsHookEx(hhook);
             bHooked = false;
         }
 
         private int _hookProc(int code, int wParam, ref KeyboardHookData lParam)
         {
             HookResult result = HookResult.NoRelease;
-            if (code >= 0)
-                 result = HookProc(code, wParam, ref lParam);
+            if (code >= 0 && HandleHook != null)
+                 result = HandleHook.Invoke(new KeyboardHook(code, wParam, lParam));
             switch (result)
             {
                 case HookResult.NoRelease:
@@ -104,15 +105,20 @@ namespace KeyHookCore
             }
         }
 
-        protected virtual HookResult HookProc(int code, int wParam, ref KeyboardHookData lParam)
+        private HookResult HookProc(Hook hook)
         {
-            Keys k = (Keys)lParam.vkCode;
+            var kh = (KeyboardHook)hook;
+            var code = kh.Code;
+            var wParam = kh.WParam;
+            var lParam = kh.LParam;
+
+            Key k = (Key)lParam.vkCode;
 
             //Check for shift(s), alt, and ctrl.
             //Shift
-            if (k == Keys.LShiftKey)
+            if (k == Key.LShiftKey)
                 bLeftShiftHeld = bShiftHeld = (wParam == WM_KEYDOWN);
-            else if (k == Keys.RShiftKey)
+            else if (k == Key.RShiftKey)
                 bRightShiftHeld = bShiftHeld = (wParam == WM_KEYDOWN);
             //Control
             if ((lParam.vkCode & 0xA2) == 0xA2 || (lParam.vkCode & 0xA3) == 0xA3)
@@ -138,7 +144,7 @@ namespace KeyHookCore
 
             return HookResult.Release;
         }
-
+        
         #endregion
         //#############################################################
         #region [# DLL Imports #]

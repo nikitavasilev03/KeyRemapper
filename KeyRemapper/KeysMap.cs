@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
+using HookCore.Models;
 
 namespace KeyRemapper
 {
     public class KeysMap
     {
-        public Dictionary<Keys, string> Map { get; } = new Dictionary<Keys, string>()
+        public Dictionary<Key, string> Map { get; } = new Dictionary<Key, string>()
         {
-            { Keys.None, "" },
-            { Keys.Space, " " },
-            { Keys.RMenu, "" },
-            { Keys.LMenu, "" },
-            { Keys.RShiftKey, "" },
+            { Key.None, "" },
+            { Key.Space, " " },
+            { Key.RMenu, "" },
+            { Key.LMenu, "" },
+            { Key.RShiftKey, "" },
         };
 
-        public string this[Keys key]
+        public string this[Key key]
         {
             get
             {

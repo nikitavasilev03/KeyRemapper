@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using HookCore.Models;
+using KeyRemapperCore;
 
-namespace KeyRemapper
+namespace KeyRemapper.Dialogs
 {
     public partial class RuleManagerDialog : Form
     {
-        public Keys CurrentKey { get; set; }
-        public Keys ChangeKey { get; set; }
+        public Key PressKey { get; set; }
+        public Key SendKey { get; set; }
 
         public RuleManagerDialog(KeysMap map)
         {
             InitializeComponent();
 
-            cbCurrentKey.TabStop = false;
-            cbChangeKey.TabStop = false;
+            cbSendKey.TabStop = false;
+            cbPressKey.TabStop = false;
             gbChange.TabStop = false;
             button1.TabStop = false;
-
 
             var keysMap = map.Map.Keys.ToList();
             foreach (var item in keysMap)
             {
-                cbCurrentKey.Items.Add(item);
-                cbChangeKey.Items.Add(item);
+                cbSendKey.Items.Add(item);
+                cbPressKey.Items.Add(item);
             }
         }
 
@@ -47,12 +48,12 @@ namespace KeyRemapper
 
         private void cbCurrentKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentKey = (Keys)cbCurrentKey.SelectedItem;
+            SendKey = (Key)cbSendKey.SelectedItem;
         }
 
         private void cbChangeKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ChangeKey = (Keys) cbChangeKey.SelectedItem;
+            PressKey = (Key)cbPressKey.SelectedItem;
         }
     }
 }

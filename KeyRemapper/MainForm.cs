@@ -1,117 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using HookCore.Models;
+using KeyRemapper.Dialogs;
+using KeyRemapperCore;
+using System;
 using System.Windows.Forms;
-using KeyHookCore;
 
 namespace KeyRemapper
 {
     public partial class MainForm : Form
     {
-        public KeyboardKeyHook KeyboardHook { get; set; }
-        public Dictionary<Keys, Keys> RulesMap { get; set; } = new Dictionary<Keys, Keys>();
-        private readonly KeysMap KeysMap = new KeysMap();
-        private KeysPair currentRule;
-
+        private readonly RulesController controller;
+        private readonly KeysMap keysMap;
         public MainForm()
         {
             InitializeComponent();
+            keysMap = new KeysMap();
 
-            KeyboardHook = new KeyboardKeyHook();
-            KeyboardHook.KeyPress += KeyboardHookOnKeyPress;
-            KeyboardHook.ManageHook += ManageHook;
-        }
-
-
-        private void MainForm_Load(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private HookResult ManageHook(Keys key)
-        {
-            if (currentRule != null && currentRule.KeyPress == key)
+            controller = new RulesController(
+                new ProfilesLoader()
+                {
+                    Folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KeyRemapper\",
+                    FileName = "ProfilesData.data"
+                },
+                new KeySender(keysMap)
+                );
+            if (controller.IsListening)
             {
-                currentRule = null;
-                return HookResult.NoRelease;
-            }
-            return HookResult.Release;
-        }
-
-        private void KeyboardHookOnKeyPress(KeyEventArgs args)
-        {
-            Keys key = args.KeyCode;
-            if (currentRule == null && RulesMap.Keys.Contains(key))
-            {
-                currentRule = new KeysPair(key, RulesMap[key]);
-                string message = KeysMap[RulesMap[key]];
-                SendKeys.Send(message);
+                btnStartKeyListen.Enabled = false;
+                btnStopKeyListen.Enabled = true;
             }
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
-            StopKeyListen();
+            //Добавляем профиля 
+            foreach (var profile in controller.Manager.Profiles)
+                toolStripComboBoxProfiles.Items.Add(profile);
+            toolStripComboBoxProfiles.SelectedItem = controller.Manager.CurrentProfile;
+            AddProfileRules(controller.Profile);
         }
 
-        public void StartKeyListen()
+        private void AddProfileRules(Profile profile)
         {
-            if (KeyboardHook != null && !KeyboardHook.Hooked)
-                KeyboardHook.Hook();
-        }
-
-        public void StopKeyListen()
-        {
-            if (KeyboardHook != null && KeyboardHook.Hooked)
-                KeyboardHook.Unhook();
+            foreach (var rule in profile.RulesMap)
+                lbRules.Items.Add(rule);
         }
 
         private void btnAddRule_Click(object sender, EventArgs e)
         {
-            RuleManagerDialog dialog = new RuleManagerDialog(KeysMap);
+            RuleManagerDialog dialog = new RuleManagerDialog(keysMap);
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                var currentKey = dialog.CurrentKey;
-                var changeKey = dialog.ChangeKey;
-
-                if (currentKey != changeKey)
+                var rule = controller.AddRule(dialog.PressKey, dialog.SendKey);
+                if (rule != null)
                 {
-                    if (changeKey != Keys.None)
-                        RulesMap.Add(currentKey, Keys.None);
-                    RulesMap.Add(changeKey, currentKey);
-                    RefreshListBox();
+                    lbRules.Items.Add(rule);
+                }
+                //Правило блокирующее нажатую клавишу
+                rule = controller.AddRule(dialog.PressKey, Key.None);
+                if (rule != null)
+                {
+                    lbRules.Items.Add(rule);
+                }
+                //Правило блокирующее заменяющую клавишу
+                rule = controller.AddRule(dialog.SendKey, Key.None);
+                if (rule != null)
+                {
+                    lbRules.Items.Add(rule);
                 }
             }
         }
 
         private void btnRemoveRule_Click(object sender, EventArgs e)
         {
-            int index = lbRules.SelectedIndex;
-            if (index >= 0)
+            if (lbRules.SelectedItem is KeysRule item && controller.RemoveRule(item))
             {
-                var item = RulesMap.ElementAt(index);
-                RulesMap.Remove(item.Key);
-                RefreshListBox();
+                lbRules.Items.Remove(item);
             }
-        }
-
-        public void RefreshListBox()
-        {
-            lbRules.Items.Clear();
-            foreach (var item in RulesMap)
-                lbRules.Items.Add($"{item.Value} -> {item.Key}");
         }
 
         private void btnStartKeyListen_Click(object sender, EventArgs e)
         {
-            StartKeyListen();
+            controller.StartKeyListen();
             btnStartKeyListen.Enabled = false;
             btnStopKeyListen.Enabled = true;
         }
 
         private void btnStopKeyListen_Click(object sender, EventArgs e)
         {
-            StopKeyListen();
+            controller.StopKeyListen();
             btnStartKeyListen.Enabled = true;
             btnStopKeyListen.Enabled = false;
         }
@@ -130,6 +106,47 @@ namespace KeyRemapper
             notifyIcon1.Visible = false;
             ShowInTaskbar = true;
             WindowState = FormWindowState.Normal;
+        }
+
+        private void toolStripMenuICloseWindow_Click(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            notifyIcon1.Visible = true;
+        }
+
+        private void toolStripMenuIExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void toolStripMenuIOptions_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuIAbout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuIProfileCreate_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuIProfileEditCurrent_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuIProfileRemoveCurrent_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            controller.SaveChange();
         }
     }
 }

@@ -36,7 +36,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>icons\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,20 +52,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KeySender.cs" />
     <Compile Include="KeysMap.cs" />
-    <Compile Include="KeysPair.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProfilesLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleManagerDialog.cs">
+    <Compile Include="Dialogs\RuleManagerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RuleManagerDialog.Designer.cs">
+    <Compile Include="Dialogs\RuleManagerDialog.Designer.cs">
       <DependentUpon>RuleManagerDialog.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainForm.resx">
@@ -79,8 +80,9 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RuleManagerDialog.resx">
+    <EmbeddedResource Include="Dialogs\RuleManagerDialog.resx">
       <DependentUpon>RuleManagerDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -100,13 +102,19 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KeyHookCore\KeyHookCore.csproj">
-      <Project>{4f43cfe7-c174-4d38-a112-0b2f703c7646}</Project>
-      <Name>KeyHookCore</Name>
-    </ProjectReference>
+    <Content Include="icons\icon.ico" />
+    <Content Include="icons\play.png" />
+    <Content Include="icons\stop.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon.ico" />
+    <ProjectReference Include="..\HookCore\HookCore.csproj">
+      <Project>{336D4C74-D916-4A8B-8FD2-E2D207E8275E}</Project>
+      <Name>HookCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KeyRemapperCore\KeyRemapperCore.csproj">
+      <Project>{494ab0d2-3ee7-475e-b589-61c79dc58fe2}</Project>
+      <Name>KeyRemapperCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

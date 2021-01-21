@@ -33,7 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,10 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyboardHook.cs" />
-    <Compile Include="KeyboardHookData.cs" />
-    <Compile Include="KeyboardKeyHook.cs" />
+    <Compile Include="Models\Hook.cs" />
+    <Compile Include="Interfaces\IListenerHook.cs" />
+    <Compile Include="Listeners\KeyboardHookListener.cs" />
+    <Compile Include="Models\HookResult.cs" />
+    <Compile Include="Models\Key.cs" />
+    <Compile Include="Models\KeyboardHookData.cs" />
+    <Compile Include="Listeners\KeyboardKeyHookListener.cs" />
+    <Compile Include="Models\KeyboardHook.cs" />
+    <Compile Include="Models\KeyHook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
